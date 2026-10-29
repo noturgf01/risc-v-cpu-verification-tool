@@ -22,4 +22,4 @@ A Java tool that tests a simplified RISC-V CPU model and reports errors.
 
 ## Documentation
 - [Eisenhower Matrix](docs/eisenhower-matrix.png)
-- System Diagram: tba :)
+- [System Diagram](docs/system-diagram.png)
