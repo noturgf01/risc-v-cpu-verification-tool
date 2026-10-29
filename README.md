@@ -21,5 +21,5 @@ A Java tool that tests a simplified RISC-V CPU model and reports errors.
 - Explore SystemVerilog integration.
 
 ## Documentation
-- Eisenhower Matrix: tba :)
+- [Eisenhower Matrix](docs/eisenhower-matrix.png)
 - System Diagram: tba :)
