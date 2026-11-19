@@ -62,14 +62,31 @@ public class Main {
         }
 
         System.out.println("x3 after invalid ADDI: " + cpu.readRegister(3));
-        TestCase test = new TestCase("ADDI", 3, 1, 15, 35);
-
-        System.out.println("Instruction: " + test.getInstruction());
-        System.out.println("Destination: x" + test.getRd());
-        System.out.println("Source: x" + test.getRs1());
-        System.out.println("Operand: " + test.getOperand());
-        System.out.println("Expected: " + test.getExpected());
+        runPredefinedTests();
     }
-    
-    
+
+    private static void runPredefinedTests() {
+        TestCase[] tests = {
+            new TestCase("ADD", 3, 1, 2, 30),
+            new TestCase("SUB", 3, 1, 2, -10),
+            new TestCase("ADDI", 3, 2, -5, 15),
+            new TestCase("SUB", 3, 1, 1, 0),
+            new TestCase("ADD", 0, 1, 2, 0)
+        };
+
+        System.out.println("\nPredefined tests");
+        int passed = 0;
+        for (TestCase test : tests) {
+            SimpleCPU cpu = new SimpleCPU();
+            cpu.writeRegister(1, 10);
+            cpu.writeRegister(2, 20);
+
+            TestRunner runner = new TestRunner(cpu);
+            if (runner.runTest(test)) {
+                passed++;
+            }
+            System.out.println();
+        }
+        System.out.printf("Predefined tests: %d passed, %d failed%n", passed, tests.length - passed);
+    }
 }
