@@ -62,7 +62,14 @@ public class Main {
         }
 
         System.out.println("x3 after invalid ADDI: " + cpu.readRegister(3));
-    }
+        TestCase test = new TestCase("ADDI", 3, 1, 15, 35);
 
+        System.out.println("Instruction: " + test.getInstruction());
+        System.out.println("Destination: x" + test.getRd());
+        System.out.println("Source: x" + test.getRs1());
+        System.out.println("Operand: " + test.getOperand());
+        System.out.println("Expected: " + test.getExpected());
+    }
+    
     
 }
