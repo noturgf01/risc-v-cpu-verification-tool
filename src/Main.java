@@ -2,6 +2,13 @@
 public class Main {
 
     public static void main(String[] args) {
+        if (args.length == 1 && "--random".equals(args[0])) {
+            if (!RandomTests.run()) {
+                System.exit(1);
+            }
+            return;
+        }
+
         SimpleCPU cpu = new SimpleCPU();
         System.out.println("RISC-V CPU Verification Tool");
         cpu.writeRegister(1, 10);
