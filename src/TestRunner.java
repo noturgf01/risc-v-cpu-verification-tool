@@ -19,7 +19,8 @@ public class TestRunner {
         } else if ("ADDI".equals(instruction)) {
             cpu.addi(rd, rs1, operand);
         } else {
-            throw new IllegalArgumentException("Unknown instruction");
+            throw new IllegalArgumentException(
+                    "Unknown instruction '" + instruction + "'. Supported instructions: ADD, SUB, ADDI");
         }
 
         int actual = cpu.readRegister(rd);
@@ -31,7 +32,8 @@ public class TestRunner {
         if (passed) {
             System.out.println("Result: PASS");
         } else {
-            System.out.println("Result: FAIL");
+            String source = "ADDI".equals(instruction) ? "immediate=" + operand : "rs2=x" + operand;
+            System.out.printf("Result: FAIL (rd=x%d, rs1=x%d, %s)%n", rd, rs1, source);
         }
         return passed;
     }

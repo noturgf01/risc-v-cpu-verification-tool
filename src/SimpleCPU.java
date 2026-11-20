@@ -19,32 +19,39 @@ public class SimpleCPU {
         }
     }
     public void add(int rd, int rs1, int rs2) {
-        if (rd < 0 || rd >= registers.length || rs1 < 0 || rs1 >= registers.length || rs2 < 0 || rs2 >= registers.length) {
-            throw new IllegalArgumentException("Invalid register index");
-        }
+        validateOperand("ADD", "rd", rd);
+        validateOperand("ADD", "rs1", rs1);
+        validateOperand("ADD", "rs2", rs2);
         if(rd != 0) {
             registers[rd] = registers[rs1] + registers[rs2];
         }
     }
     public void sub(int rd, int rs1, int rs2) {
-        if (rd < 0 || rd >= registers.length || rs1 < 0 || rs1 >= registers.length || rs2 < 0 || rs2 >= registers.length) {
-            throw new IllegalArgumentException("Invalid register index");
-        }
+        validateOperand("SUB", "rd", rd);
+        validateOperand("SUB", "rs1", rs1);
+        validateOperand("SUB", "rs2", rs2);
         if(rd != 0) {
             registers[rd] = registers[rs1] - registers[rs2];
         }
     }
     public void addi(int rd, int rs1, int immediate) {
-        if (rd < 0 || rd >= registers.length || rs1 < 0 || rs1 >= registers.length) {
-            throw new IllegalArgumentException("Invalid register index");
-        }
+        validateOperand("ADDI", "rd", rd);
+        validateOperand("ADDI", "rs1", rs1);
         if (immediate < -2048 || immediate > 2047) {
-            throw new IllegalArgumentException("Invalid immediate value");
+            throw new IllegalArgumentException(
+                    "ADDI immediate " + immediate + " is out of range [-2048, 2047]");
         }
         if(rd != 0) {
             registers[rd] = registers[rs1] + immediate;
         }
         
+    }
+
+    private void validateOperand(String instruction, String operand, int index) {
+        if (index < 0 || index >= registers.length) {
+            throw new IllegalArgumentException(instruction + " register " + operand
+                    + " index " + index + " is out of range [0, " + (registers.length - 1) + "]");
+        }
     }
 }
 

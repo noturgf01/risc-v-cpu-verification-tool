@@ -65,7 +65,7 @@ public class Main {
             cpu.addi(3, 1, 5000);
             System.out.println("FAIL: Invalid immediate accepted");
         } catch (IllegalArgumentException e) {
-            System.out.println("PASS: Invalid immediate rejected");
+            System.out.println("PASS: " + e.getMessage());
         }
 
         System.out.println("x3 after invalid ADDI: " + cpu.readRegister(3));
