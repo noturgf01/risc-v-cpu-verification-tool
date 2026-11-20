@@ -10,6 +10,7 @@ public class Main {
         }
 
         SimpleCPU cpu = new SimpleCPU();
+        int validationFailures = 0;
         System.out.println("RISC-V CPU Verification Tool");
         cpu.writeRegister(1, 10);
         cpu.writeRegister(2, 20);
@@ -20,6 +21,7 @@ public class Main {
         try {
             cpu.readRegister(-1);
             System.out.println("FAIL: Negative index accepted");
+            validationFailures++;
         } catch (IllegalArgumentException e) {
             System.out.println("PASS: Negative index rejected");
         }
@@ -27,6 +29,7 @@ public class Main {
         try {
             cpu.writeRegister(32, 100);
             System.out.println("FAIL: Index 32 accepted");
+            validationFailures++;
         } catch (IllegalArgumentException e) {
             System.out.println("PASS: Index 32 rejected");
         }
@@ -64,15 +67,19 @@ public class Main {
         try {
             cpu.addi(3, 1, 5000);
             System.out.println("FAIL: Invalid immediate accepted");
+            validationFailures++;
         } catch (IllegalArgumentException e) {
             System.out.println("PASS: " + e.getMessage());
         }
 
         System.out.println("x3 after invalid ADDI: " + cpu.readRegister(3));
-        runPredefinedTests();
+        boolean predefinedPassed = runPredefinedTests();
+        if (!predefinedPassed || validationFailures != 0) {
+            System.exit(1);
+        }
     }
 
-    private static void runPredefinedTests() {
+    private static boolean runPredefinedTests() {
         TestCase[] tests = {
             new TestCase("ADD", 3, 1, 2, 30),
             new TestCase("SUB", 3, 1, 2, -10),
@@ -95,5 +102,6 @@ public class Main {
             System.out.println();
         }
         System.out.printf("Predefined tests: %d passed, %d failed%n", passed, tests.length - passed);
+        return passed == tests.length;
     }
 }
