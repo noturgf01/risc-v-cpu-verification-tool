@@ -1,6 +1,4 @@
-
 public class Main {
-
     public static void main(String[] args) {
         if (args.length == 1 && "--random".equals(args[0])) {
             if (!RandomTests.run()) {
@@ -9,75 +7,48 @@ public class Main {
             return;
         }
 
-        SimpleCPU cpu = new SimpleCPU();
-        int validationFailures = 0;
+        if (args.length != 0) {
+            System.err.println("Usage: java -cp out Main [--random]");
+            System.exit(2);
+        }
+
         System.out.println("RISC-V CPU Verification Tool");
-        cpu.writeRegister(1, 10);
-        cpu.writeRegister(2, 20);
-        cpu.writeRegister(0, 100);
-        System.out.println(cpu.readRegister(1));
-        System.out.println(cpu.readRegister(2));
-        System.out.println(cpu.readRegister(0));
-        try {
-            cpu.readRegister(-1);
-            System.out.println("FAIL: Negative index accepted");
-            validationFailures++;
-        } catch (IllegalArgumentException e) {
-            System.out.println("PASS: Negative index rejected");
-        }
-
-        try {
-            cpu.writeRegister(32, 100);
-            System.out.println("FAIL: Index 32 accepted");
-            validationFailures++;
-        } catch (IllegalArgumentException e) {
-            System.out.println("PASS: Index 32 rejected");
-        }
-        cpu.add(3, 1, 2);
-        System.out.println("ADD result: " + cpu.readRegister(3));
-        cpu.add(0, 1, 2);
-        System.out.println("ADD to x0: " + cpu.readRegister(0));
-
-        cpu.add(1, 1, 2);
-        System.out.println("ADD with same destination: " + cpu.readRegister(1));
-        cpu.writeRegister(1, 30);
-        cpu.writeRegister(2, 10);
-
-        cpu.sub(3, 1, 2);
-        System.out.println("SUB result: " + cpu.readRegister(3));
-
-        cpu.sub(0, 1, 2);
-        System.out.println("SUB to x0: " + cpu.readRegister(0));
-
-        cpu.sub(1, 1, 2);
-        System.out.println("SUB same destination: " + cpu.readRegister(1));
-        cpu.writeRegister(1, 20);
-
-        cpu.addi(3, 1, 15);
-        System.out.println("ADDI result: " + cpu.readRegister(3));
-
-        cpu.addi(4, 1, -5);
-        System.out.println("ADDI negative: " + cpu.readRegister(4));
-
-        cpu.addi(0, 1, 100);
-        System.out.println("ADDI to x0: " + cpu.readRegister(0));
-
-        cpu.writeRegister(3, 100);
-
-        try {
-            cpu.addi(3, 1, 5000);
-            System.out.println("FAIL: Invalid immediate accepted");
-            validationFailures++;
-        } catch (IllegalArgumentException e) {
-            System.out.println("PASS: " + e.getMessage());
-        }
-
-        System.out.println("x3 after invalid ADDI: " + cpu.readRegister(3));
         boolean predefinedPassed = runPredefinedTests();
-        if (!predefinedPassed || validationFailures != 0) {
+        boolean validationPassed = runValidationTests();
+        if (!predefinedPassed || !validationPassed) {
             System.exit(1);
         }
     }
+
+    private static boolean runValidationTests() {
+        SimpleCPU cpu = new SimpleCPU();
+        cpu.writeRegister(3, 100);
+        boolean negativeIndexRejected = expectInvalidInput(
+                "Negative read index", () -> cpu.readRegister(-1));
+        boolean highIndexRejected = expectInvalidInput(
+                "Out-of-range write index", () -> cpu.writeRegister(32, 100));
+        boolean immediateRejected = expectInvalidInput(
+                "Out-of-range ADDI immediate", () -> cpu.addi(3, 1, 5000));
+
+        // Invalid instructions must leave the destination register intact.
+        boolean destinationPreserved = cpu.readRegister(3) == 100;
+        if (!destinationPreserved) {
+            System.err.println("FAIL: Invalid ADDI changed x3");
+        }
+        return negativeIndexRejected && highIndexRejected && immediateRejected && destinationPreserved;
+    }
+
+    private static boolean expectInvalidInput(String caseName, Runnable operation) {
+        try {
+            operation.run();
+        } catch (IllegalArgumentException error) {
+            System.out.printf("PASS: %s (%s)%n", caseName, error.getMessage());
+            return true;
+        }
+        System.err.printf("FAIL: %s was accepted%n", caseName);
+        return false;
+    }
+
 
     private static boolean runPredefinedTests() {
         TestCase[] tests = {
@@ -88,7 +59,7 @@ public class Main {
             new TestCase("ADD", 0, 1, 2, 0)
         };
 
-        System.out.println("\nPredefined tests");
+        System.out.println("Predefined tests");
         int passed = 0;
         for (TestCase test : tests) {
             SimpleCPU cpu = new SimpleCPU();
