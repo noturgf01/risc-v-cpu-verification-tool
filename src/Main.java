@@ -60,6 +60,7 @@ public class Main {
         };
 
         System.out.println("Predefined tests");
+        InstructionCoverage coverage = new InstructionCoverage();
         int passed = 0;
         for (TestCase test : tests) {
             SimpleCPU cpu = new SimpleCPU();
@@ -70,9 +71,11 @@ public class Main {
             if (runner.runTest(test)) {
                 passed++;
             }
+            coverage.record(test.getInstruction());
             System.out.println();
         }
         System.out.printf("Predefined tests: %d passed, %d failed%n", passed, tests.length - passed);
+        coverage.printReport();
         return passed == tests.length;
     }
 }
