@@ -49,7 +49,7 @@ I wanted to check CPU results without doing each calculation by hand. The tool m
 
 ## Roadmap
 
-I focused on getting the Java tests and instruction coverage working first. The SystemVerilog ALU is a future step.
+This version focuses on Java testing and instruction coverage. I have not yet studied SystemVerilog or ALU design, so I plan to add the ALU after learning those topics.
 
 - [x] Set up the Java project.
 - [x] Add CPU registers and implement ADD, SUB, and ADDI.
