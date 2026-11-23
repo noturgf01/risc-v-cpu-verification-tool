@@ -32,7 +32,12 @@ public class TestRunner {
         if (passed) {
             System.out.println("Result: PASS");
         } else {
-            String source = "ADDI".equals(instruction) ? "immediate=" + operand : "rs2=x" + operand;
+            String source;
+            if ("ADDI".equals(instruction)) {
+                source = "immediate=" + operand;
+            } else {
+                source = "rs2=x" + operand;
+            }
             System.out.printf("Result: FAIL (rd=x%d, rs1=x%d, %s)%n", rd, rs1, source);
         }
         return passed;
